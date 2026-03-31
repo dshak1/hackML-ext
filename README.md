@@ -37,6 +37,20 @@ Place your fraud detection datasets in the `fraud/` directory:
 - `fraud/train.csv` - Training data with target column
 - `fraud/test.csv` - Test data without target column
 
+If you do not have data yet, generate a realistic demo dataset:
+
+```bash
+python scripts/generate_demo_data.py --out_dir fraud --n_train 50000 --n_test 20000
+```
+
+Then run training/benchmarking with:
+
+```bash
+python scripts/train_model.py --train fraud/train.csv --test fraud/test.csv --out_dir runs
+```
+
+> Tip (zsh/bash): line continuations require the backslash to be the final character on each line (no trailing spaces).
+
 ### 2. Validate Data
 
 Run data validation to check data quality and generate reports:
@@ -59,6 +73,21 @@ python scripts/train_model.py \
   --test fraud/test.csv \
   --out_dir runs
 ```
+
+### 4. Benchmark Multiple Models (New)
+
+Run repeated cross-validated benchmarking across baseline and advanced models:
+
+```bash
+python scripts/benchmark_models.py \
+  --train fraud/train.csv \
+  --test fraud/test.csv \
+  --out_dir runs/benchmark \
+  --n_splits 5 \
+  --n_repeats 2
+```
+
+This writes `benchmark_summary.json` and `benchmark_summary.md` with Macro-F1 and runtime comparisons.
 
 ## Contributing
 

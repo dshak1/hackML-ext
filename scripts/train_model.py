@@ -58,6 +58,18 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def _assert_input_files(train_path: str, test_path: str) -> None:
+    missing = [path for path in [train_path, test_path] if not Path(path).exists()]
+    if missing:
+        missing_str = ", ".join(missing)
+        raise FileNotFoundError(
+            "Missing dataset file(s): "
+            f"{missing_str}. "
+            "Generate demo data with `python scripts/generate_demo_data.py` "
+            "or provide valid --train/--test paths."
+        )
+
+
 def _stratified_sample(
     df: pd.DataFrame,
     target_col: str,
@@ -102,6 +114,8 @@ def _add_prefix_features(df: pd.DataFrame) -> pd.DataFrame:
 def main() -> int:
     args = parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
+    _assert_input_files(args.train, args.test)
 
     logging.info("Loading data")
     train_df = pd.read_csv(args.train, low_memory=False)
